@@ -4,7 +4,7 @@ const cors = require("cors")
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-const port = 3001;
+const port = process.env.PORT || 3001;
 const {connectToDatabase} = require("./mongodb/connectDB")
 const addUser = require("./routes/adduser")
 const doctors = require("./routes/getDoctorDetails")

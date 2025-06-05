@@ -1,6 +1,7 @@
 const { MongoClient } = require("mongodb");
+require('dotenv').config();
 
-const uri = "mongodb+srv://sairohith:1743@hospital.3hgft.mongodb.net/Hospital?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
 
 let database;
