@@ -1,2 +1,2 @@
-const ENDPOINT = 'http://192.168.1.38:3001/api/'
+const ENDPOINT = 'https://doc4u-backend.onrender.com/api/'
 export default ENDPOINT
