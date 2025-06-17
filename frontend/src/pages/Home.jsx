@@ -464,7 +464,7 @@ const Home = () => {
                         </div>
                     </div>
                     <div className="faq-bg row align-items-center rounded-4 px-3 ps-sm-4 pt-0 pt-md-5 pb-3" style={{
-                        backgroundImage: ` url("assets/img/faq/faqimg.jpg")`,
+                        backgroundImage: ` url("assets/img/faq/Faqimg.jpg")`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
                     }
