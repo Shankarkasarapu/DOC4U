@@ -19,7 +19,7 @@ const routes = [
   "changePassword", "resetPassword", "verifyOtp", "topDoctors", "adduser",
   "getDoctorDetails", "updateUserDetails", "login", "addreview",
   "getUserDetails", "getDoctor", "addDependants", "bookAppointment",
-  "getUserAppointments", "forgotPassword",
+  "getUserAppointments", "getBookedSlots", "forgotPassword",
 ];
 routes.forEach((name) => app.use("/api", require(`./routes/${name}`)));
 

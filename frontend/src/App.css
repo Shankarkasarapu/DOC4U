@@ -275,3 +275,15 @@ a{
   background-color: #f4f4f4;
   transition: background-color 0.3s ease;
 }
+
+
+/* ---- booking: live availability states ---- */
+.date-item.is-full { opacity: .45; cursor: not-allowed; }
+.date-item .date-left { display: block; margin-top: 2px; font-size: 11px; color: #16a34a; font-weight: 600; }
+.date-item.is-full .date-left { color: #dc2626; }
+.timing-item.is-booked {
+  opacity: .5; cursor: not-allowed; text-decoration: line-through; background: #f1f5f9; position: relative;
+}
+.timing-item .slot-tag {
+  display: block; text-decoration: none; font-size: 10px; font-weight: 700; color: #dc2626; text-transform: uppercase;
+}

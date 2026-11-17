@@ -30,6 +30,11 @@ async function ensureIndexes() {
     await Promise.all([
       db.collection("users").createIndex({ email: 1 }),
       db.collection("appointments").createIndex({ user_id: 1 }),
+      // One booking per doctor/date/time. Partial, so older rows without date_key don't block it.
+      db.collection("appointments").createIndex(
+        { doctor_id: 1, date_key: 1, time: 1 },
+        { unique: true, partialFilterExpression: { date_key: { $exists: true } } }
+      ),
     ]);
   } catch (error) {
     console.error("Index creation failed (non-fatal):", error.message);
