@@ -1,28 +1,28 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Modal } from 'react-bootstrap';
-import Default from '../theme/Default';
-import LoginEmail from '../Authentication/LoginEmail';
+import React, { memo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import ToastNotification from './Modals/ToastNotification';
+import { Button } from 'react-bootstrap';
 
-const  DoctorItem = ({ item }) => {
+const DoctorItem = ({ item, date, index = 0 }) => {
+  const bookingLink = `/booking/${item._id}${date ? `?date=${date}` : ""}`;
   const user_id = localStorage.getItem('user_id');
 
-  const [show, setShow] = useState(false);
+  const navigate = useNavigate();
+  const [toast, setToast] = useState({ show: false, message: '', isSuccess: false });
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => {
-    setShow(true);
-    // setTimeout(() => {
-    //   setShow(false);
-    // }, 5000);
+  // Logged-out visitors get a toast, then land on login and come back to this booking afterwards
+  const handleBookClick = () => {
+    setToast({ show: true, message: 'Please log in to book an appointment', isSuccess: false });
+    try { sessionStorage.setItem('redirect_after_login', bookingLink); } catch (e) { /* ignore */ }
+    setTimeout(() => navigate('/login'), 1500);
   };
 
   return (
-    <div className="col-sm-6 col-md-4 col-lg-4 col-xl-3">
+    <div className="col-sm-6 col-md-4 col-lg-4 col-xl-3 d4u-fade-in" style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}>
       <div className="profile-widget">
         <div className="doc-img m-auto w-auto" style={{ height: '270px' }}>
           <Link to={`/doctor-profile/${item._id}`}>
-            <img className="" alt="User Image" src={item.image} />
+            <img loading="lazy" decoding="async" alt={item.name} src={item.image} />
           </Link>
         </div>
         <div className="pro-content">
@@ -55,13 +55,13 @@ const  DoctorItem = ({ item }) => {
             </div>
             <div className="col-6">
               {user_id ? (
-                <Link to={`/booking/${item._id}`} className="btn book-btn">
+                <Link to={bookingLink} className="btn book-btn">
                   Book Now
                 </Link>
               ) : (
                 <Button
                   className="btn book-btn w-100"
-                  onClick={handleShow}
+                  onClick={handleBookClick}
 
                 >
                   Book Now
@@ -72,28 +72,9 @@ const  DoctorItem = ({ item }) => {
         </div>
       </div>
 
-      {/* Modal Design */}
-      <Modal show={show} onHide={handleClose} centered>
-        <Modal.Body className="text-center py-4 px-5">
-          <Modal.Title className="fw-bold text-primary mb-3">
-            Sign In Required
-          </Modal.Title>
-          <p className="text-muted">
-            You need to sign in, to book an appointment..!!!
-          </p>
-          <div className="d-flex justify-content-center gap-3 mt-4">
-            <Link to="/login" className="btn btn-primary">
-              Sign In
-            </Link>
-            <Button variant="outline-secondary" onClick={handleClose}>
-              Cancel
-            </Button>
-          </div>
-        </Modal.Body>
-      </Modal>
-
+      {toast.show && <ToastNotification toast={toast} setToast={setToast} />}
     </div>
   );
 };
 
-export default DoctorItem;
+export default memo(DoctorItem);

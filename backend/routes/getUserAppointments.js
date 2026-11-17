@@ -31,26 +31,22 @@ router.post("/get-user-appointments", upload.none(), async (req, res) => {
       });
     }
 
-    // Enrich appointments with doctor details
-    const enrichedAppointments = await Promise.all(
-      appointments.map(async (appointment) => {
-        if (appointment.doctor_id) {
-          const doctor = await doctorsCollection.findOne({ _id: new ObjectId(appointment.doctor_id) });
+    // Fetch all needed doctors in ONE query instead of one query per appointment
+    const doctorIds = [...new Set(appointments.map((a) => a.doctor_id).filter((id) => id && ObjectId.isValid(id)))]
+      .map((id) => new ObjectId(id));
+    const doctors = doctorIds.length
+      ? await doctorsCollection
+          .find({ _id: { $in: doctorIds } }, { projection: { name: 1, speciality: 1, image: 1 } })
+          .toArray()
+      : [];
+    const doctorMap = new Map(doctors.map((d) => [String(d._id), d]));
 
-          if (doctor) {
-            return {
-              ...appointment,
-              doctor: {
-                name: doctor.name,
-                speciality: doctor.speciality,
-                image: doctor.image,
-              },
-            };
-          }
-        }
-        return appointment;
-      })
-    );
+    const enrichedAppointments = appointments.map((appointment) => {
+      const doctor = doctorMap.get(String(appointment.doctor_id));
+      return doctor
+        ? { ...appointment, doctor: { name: doctor.name, speciality: doctor.speciality, image: doctor.image } }
+        : appointment;
+    });
 
     res.status(200).json({
       status: "success",

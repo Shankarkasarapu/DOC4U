@@ -161,7 +161,7 @@ const DoctorPayment = () => {
             <div className="stripe-wrapper">
               <div className="stripe-box">
                 <div className="stripe-img">
-                  <img src="assets/img/icons/stripe.svg" alt="img" />
+                  <img loading="lazy" decoding="async" src="assets/img/icons/stripe.svg" alt="img" />
                 </div>
                 <Link to="javascript:void(0);" className="btn">
                   <i className="fa-solid fa-gear" />
@@ -170,7 +170,7 @@ const DoctorPayment = () => {
               </div>
               <div className="stripe-box active">
                 <div className="stripe-img">
-                  <img src="assets/img/icons/paypal.svg" alt="img" />
+                  <img loading="lazy" decoding="async" src="assets/img/icons/paypal.svg" alt="img" />
                 </div>
                 <Link
                   to="javascript:void(0);"

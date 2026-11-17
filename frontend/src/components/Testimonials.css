@@ -1,0 +1,12 @@
+.d4u-testimonial {
+  position: relative; height: 100%; margin: 0; display: flex; flex-direction: column; justify-content: space-between;
+  padding: 2rem 1.75rem 1.5rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 18px;
+  box-shadow: 0 1px 3px rgba(15,23,42,.08);
+}
+.d4u-testimonial__quote { position: absolute; top: 1.25rem; right: 1.5rem; font-size: 2rem; color: #dbeafe; }
+.d4u-testimonial blockquote { margin: 0 0 1.5rem; color: #475569; font-size: 1rem; line-height: 1.7; }
+.d4u-testimonial figcaption { display: flex; align-items: center; gap: .875rem; margin-top: auto; }
+.d4u-testimonial img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; flex: none; }
+.d4u-testimonial strong { display: block; color: #0f172a; }
+.d4u-testimonial small { color: #64748b; }
+.d4u-testimonials .d4u-slider__track { align-items: stretch; }

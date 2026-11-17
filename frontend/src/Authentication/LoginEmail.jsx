@@ -1,15 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ToastNotification from '../components/Modals/ToastNotification';
 import { auth, GoogleAuthProvider, signInWithPopup } from '../data/firebase';
 import ENDPOINT from '../data/ENDPOINT';
+import { BtnLabel } from '../components/Loaders';
 import SecurityHeaders from '../data/SecurityHeaders';
 
+// After login, return to the page the visitor originally wanted (e.g. a booking page)
+const goAfterLogin = () => {
+  let target = '/';
+  try {
+    const saved = sessionStorage.getItem('redirect_after_login');
+    if (saved && saved.startsWith('/') && !saved.startsWith('//')) target = saved;
+    sessionStorage.removeItem('redirect_after_login');
+  } catch (e) { /* ignore */ }
+  window.location.replace(target);
+};
+
 const LoginEmail = () => {
+  const routerLocation = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [googmail,setgoogmail] = useState()
+  const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState({
     show: false,
     message: '',
@@ -23,7 +37,16 @@ const LoginEmail = () => {
     }, 3000);
   };
 
+  // Sent here from a protected page (e.g. booking)? Tell the visitor why.
+  useEffect(() => {
+    const msg = routerLocation.state?.message;
+    if (msg) handleToast(msg, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const getLogin = async () => {
+    if (busy) return;
+    setBusy(true);
     const val = new FormData();
     val.append('email', email);
     val.append('password', password);
@@ -36,14 +59,16 @@ const LoginEmail = () => {
         console.log('User successfully logged in', response);
         localStorage.setItem('user_id', response.data.id);
         setTimeout(() => {
-          window.location.replace('/');
+          goAfterLogin();
         }, 2500);
       } else {
         handleToast('Invalid Credentials. Please try again.', false);
+        setBusy(false);
         console.log('Invalid login attempt', response);
       }
     } catch (error) {
       handleToast('An error occurred. Please try again later.', false);
+      setBusy(false);
       console.error('Login failed', error);
     }
   };
@@ -59,7 +84,7 @@ const LoginEmail = () => {
       handleToast('Google login successful!', true);
       setgoogmail(user.email)
       setTimeout(() => {
-        window.location.replace('/');
+        goAfterLogin();
       }, 2500);
     } catch (error) {
       handleToast('Google login failed. Please try again.', false);
@@ -125,11 +150,12 @@ const LoginEmail = () => {
                         </Link>
                       </div>
                       <button
-                        className="btn btn-primary w-100 btn-lg login-btn"
+                        className={`btn btn-primary w-100 btn-lg login-btn ${busy ? 'is-loading' : ''}`}
                         type="submit"
                         onClick={getLogin}
+                        disabled={busy}
                       >
-                        Login
+                        <BtnLabel loading={busy} loadingText="Logging in...">Login</BtnLabel>
                       </button>
                       <div className="login-or">
                         <span className="or-line" />

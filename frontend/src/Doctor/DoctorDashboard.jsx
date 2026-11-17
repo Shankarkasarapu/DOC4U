@@ -33,7 +33,7 @@ const DoctorDashboard = () => {
 								<div class="widget-profile pro-widget-content">
 									<div class="profile-info-widget">
 										<Link to="doctor-profile.html" class="booking-doc-img">
-											<img src="assets/img/doctors-dashboard/doctor-profile-img.jpg" alt="User Image"/>
+											<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/doctor-profile-img.jpg" alt="User Image"/>
 										</Link>
 										<div class="profile-det-info">
 											<h3><Link to="doctor-profile.html">Dr Edalin Hendry</Link></h3>
@@ -144,7 +144,7 @@ const DoctorDashboard = () => {
                                 </div>
                                 <div class="upcoming-patient-info">
                                     <div class="info-details">
-                                        <span class="img-avatar"><img src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img"/></span>
+                                        <span class="img-avatar"><img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img"/></span>
                                         <div class="name-info">
                                             <span>#Apt0001</span>
                                             <h6>Adrian Marshall</h6>
@@ -156,7 +156,7 @@ const DoctorDashboard = () => {
                                         <h6>Today, 10:45 AM</h6>
                                     </div>
                                     <div class="circle-bg">
-                                        <img src="assets/img/bg/dashboard-circle-bg.png" alt="Img"/>
+                                        <img loading="lazy" decoding="async" src="assets/img/bg/dashboard-circle-bg.png" alt="Img"/>
                                     </div>
                                 </div>
                                 <div class="appointment-card-footer">
@@ -234,7 +234,7 @@ const DoctorDashboard = () => {
 															<td>
 																<div class="patient-info-profile">
 																	<Link to="appointments.html" class="table-avatar">
-																		<img src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img"/>
+																		<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img"/>
 																	</Link>
 																	<div class="patient-name-info">
 																		<span>#Apt0001</span>
@@ -260,7 +260,7 @@ const DoctorDashboard = () => {
 															<td>
 																<div class="patient-info-profile">
 																	<Link to="appointments.html" class="table-avatar">
-																		<img src="assets/img/doctors-dashboard/profile-02.jpg" alt="Img"/>
+																		<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-02.jpg" alt="Img"/>
 																	</Link>
 																	<div class="patient-name-info">
 																		<span>#Apt0002</span>
@@ -286,7 +286,7 @@ const DoctorDashboard = () => {
 															<td>
 																<div class="patient-info-profile">
 																	<Link to="appointments.html" class="table-avatar">
-																		<img src="assets/img/doctors-dashboard/profile-03.jpg" alt="Img"/>
+																		<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-03.jpg" alt="Img"/>
 																	</Link>
 																	<div class="patient-name-info">
 																		<span>#Apt0003</span>
@@ -312,7 +312,7 @@ const DoctorDashboard = () => {
 															<td>
 																<div class="patient-info-profile">
 																	<Link to="appointments.html" class="table-avatar">
-																		<img src="assets/img/doctors-dashboard/profile-04.jpg" alt="Img"/>
+																		<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-04.jpg" alt="Img"/>
 																	</Link>
 																	<div class="patient-name-info">
 																		<span>#Apt0004</span>
@@ -338,7 +338,7 @@ const DoctorDashboard = () => {
 															<td>
 																<div class="patient-info-profile">
 																	<Link to="appointments.html" class="table-avatar">
-																		<img src="assets/img/doctors-dashboard/profile-05.jpg" alt="Img"/>
+																		<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-05.jpg" alt="Img"/>
 																	</Link>
 																	<div class="patient-name-info">
 																		<span>#Apt0005</span>
@@ -385,7 +385,7 @@ const DoctorDashboard = () => {
 																<td>
 																	<div class="patient-info-profile">
 																		<Link to="invoices.html" class="table-avatar">
-																			<img src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img"/>
+																			<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img"/>
 																		</Link>
 																		<div class="patient-name-info">
 																			<h5><Link to="invoices.html">Adrian</Link></h5>
@@ -415,7 +415,7 @@ const DoctorDashboard = () => {
 																<td>
 																	<div class="patient-info-profile">
 																		<Link to="#" class="table-avatar">
-																			<img src="assets/img/doctors-dashboard/profile-02.jpg" alt="Img"/>
+																			<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-02.jpg" alt="Img"/>
 																		</Link>
 																		<div class="patient-name-info">
 																			<h5><Link to="#">Kelly</Link></h5>
@@ -445,7 +445,7 @@ const DoctorDashboard = () => {
 																<td>
 																	<div class="patient-info-profile">
 																		<Link to="#" class="table-avatar">
-																			<img src="assets/img/doctors-dashboard/profile-03.jpg" alt="Img"/>
+																			<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-03.jpg" alt="Img"/>
 																		</Link>
 																		<div class="patient-name-info">
 																			<h5><Link to="#">Samuel</Link></h5>
@@ -475,7 +475,7 @@ const DoctorDashboard = () => {
 																<td>
 																	<div class="patient-info-profile">
 																		<Link to="#" class="table-avatar">
-																			<img src="assets/img/doctors-dashboard/profile-04.jpg" alt="Img"/>
+																			<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-04.jpg" alt="Img"/>
 																		</Link>
 																		<div class="patient-name-info">
 																			<h5><Link to="#">Catherine</Link></h5>
@@ -505,7 +505,7 @@ const DoctorDashboard = () => {
 																<td>
 																	<div class="patient-info-profile">
 																		<Link to="#" class="table-avatar">
-																			<img src="assets/img/doctors-dashboard/profile-05.jpg" alt="Img"/>
+																			<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-05.jpg" alt="Img"/>
 																		</Link>
 																		<div class="patient-name-info">
 																			<h5><Link to="#">Robert</Link></h5>

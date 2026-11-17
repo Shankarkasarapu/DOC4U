@@ -15,10 +15,25 @@ router.post("/book-appointment", upload.none(), async (req, res) => {
         message: "Missing required fields: user_id, doctor_id, date, and time are required.",
       });
     }
+    if (!ObjectId.isValid(user_id) || !ObjectId.isValid(doctor_id)) {
+      return res.status(400).json({ status: "error", message: "Invalid user or doctor id." });
+    }
+
     const database = await connectToDatabase();
     const appointmentsCollection = database.collection("appointments");
     const usersCollection = database.collection("users");
     const doctorsCollection = database.collection("Doctors_data");
+
+    // Only real, registered users may book: reject before anything is written
+    const bookingUser = await usersCollection.findOne({ _id: new ObjectId(user_id) }, { projection: { _id: 1 } });
+    if (!bookingUser) {
+      return res.status(401).json({ status: "error", message: "Please log in to book an appointment." });
+    }
+    const bookingDoctor = await doctorsCollection.findOne({ _id: new ObjectId(doctor_id) }, { projection: { _id: 1 } });
+    if (!bookingDoctor) {
+      return res.status(404).json({ status: "error", message: "Doctor not found." });
+    }
+
     const appointment = {
       user_id: user_id,
       doctor_id: doctor_id,

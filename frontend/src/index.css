@@ -1,0 +1,18 @@
+
+
+/*********** page scale: 94% with side gutters kept ************/
+html body {
+  zoom: 0.94;
+}
+
+/* Keep breathing room at the left and right edges at every screen width */
+.container,
+.container-fluid {
+  padding-left: max(16px, 1.5vw) !important;
+  padding-right: max(16px, 1.5vw) !important;
+}
+
+/* Browsers without CSS zoom (older Firefox): fall back to scaling the root font size */
+@supports not (zoom: 1) {
+  html { font-size: 94%; }
+}

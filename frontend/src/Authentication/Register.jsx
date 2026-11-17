@@ -1,3 +1,4 @@
+import { BtnLabel } from '../components/Loaders';
 import axios from 'axios'
 import React, { createContext, useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -124,13 +125,13 @@ const Register = () => {
                 </div>
                 
                 <button
-                  className="btn btn-primary w-100 btn-lg login-btn"
+                  className={`btn btn-primary w-100 btn-lg login-btn ${loading ? 'is-loading' : ''}`}
                   type="submit"
                   onClick={()=>{useradd()}}
+                  disabled={loading}
                 >
-                  {loading ? 'Registering...' : 'Register'}
+                  <BtnLabel loading={loading} loadingText="Registering...">Register</BtnLabel>
                 </button>
-                  {loading && <p>Loading...</p>} 
                 <div className="login-or">
                   <span className="or-line" />
                   <span className="span-or">or</span>

@@ -1,54 +1,60 @@
 import './App.css';
 import "animate.css";
-import Appointments from './patients/Appointments';
-import Booking from './patients/Booking';
-import BookingSuccess from './patients/BookingSuccess';
-import ChangePassword from './patients/ChangePassword';
-import Checkout from './patients/Checkout';
-import Dependants from './patients/Dependants';
-import DoctorProfile from './patients/DoctorProfile';
-import DoctorsList from './patients/DoctorsList';
-import Invoices from './patients/Invoices';
-import Patientsdasboard from './patients/Patientsdasboard';
-import ProfileSettings from './patients/ProfileSettings';
 import Default from './theme/Default';
-import Aboutus from './pages/Aboutus';
-import Contactus from './pages/Contactus';
-import Faq from './pages/Faq';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoginEmail from './Authentication/LoginEmail';
-import LoginPhone from './Authentication/LoginPhone';
-import PatientSignup from './Authentication/PatientSignup';
 // import DoctorSignup from './Authentication/DoctorSignup';
-import DoctorDashboard from './Doctor/DoctorDashboard';
-import Requests from './Doctor/Requests';
-import AvailableTimings from './Doctor/AvailableTimings';
 // import Appointments from './Doctor/Appointments';
-import MyPatients from './Doctor/MyPatients';
-import Reviews from './Doctor/Reviews';
-import Accounts from './Doctor/Accounts';
 // import Invoices from './Doctor/Invoices';
-import DoctorChangePswd from './Doctor/DoctorChangePswd';
-import DoctorProfileSettings from './Doctor/DoctorProfileSettings';
-import DoctorPayment from './Doctor/DoctorPayment';
 // import Login from './Doctor/Login';
-import DoctorAppointmentStart from './Doctor/DoctorAppointmentStart';
-import DoctorDetails from './Authentication/DoctorDetails';
-import ForgotPassword from './Authentication/ForgotPassword';
-import DoctorRegister from './Authentication/DoctorRegister';
 // import Appointments from './Doctor/Appointments';
 // import Invoices from './Doctor/Invoices';
-import Login from './Authentication/DocLogin';
-import Register from './Authentication/Register';
-import Home from './pages/Home';
-import PatientDetails from './Authentication/PatientDetails';
 import DoctorDefault from './theme/DoctorDefault';
-import ResetPassword from './Authentication/ResetPassword';
 import SecurityHeaders from './data/SecurityHeaders';
 import ENDPOINT from './data/ENDPOINT';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import GetUserId from './data/GetUserID';
+import RequireAuth from './components/RequireAuth';
+import { PageLoader, TopProgress } from './components/Loaders';
+
+// Route-level code splitting: each page is downloaded only when visited
+const Appointments = lazy(() => import('./patients/Appointments'));
+const Booking = lazy(() => import('./patients/Booking'));
+const BookingSuccess = lazy(() => import('./patients/BookingSuccess'));
+const ChangePassword = lazy(() => import('./patients/ChangePassword'));
+const Checkout = lazy(() => import('./patients/Checkout'));
+const Dependants = lazy(() => import('./patients/Dependants'));
+const DoctorProfile = lazy(() => import('./patients/DoctorProfile'));
+const DoctorsList = lazy(() => import('./patients/DoctorsList'));
+const Invoices = lazy(() => import('./patients/Invoices'));
+const Patientsdasboard = lazy(() => import('./patients/Patientsdasboard'));
+const ProfileSettings = lazy(() => import('./patients/ProfileSettings'));
+const Aboutus = lazy(() => import('./pages/Aboutus'));
+const Contactus = lazy(() => import('./pages/Contactus'));
+const Faq = lazy(() => import('./pages/Faq'));
+const LoginEmail = lazy(() => import('./Authentication/LoginEmail'));
+const LoginPhone = lazy(() => import('./Authentication/LoginPhone'));
+const PatientSignup = lazy(() => import('./Authentication/PatientSignup'));
+const DoctorDashboard = lazy(() => import('./Doctor/DoctorDashboard'));
+const Requests = lazy(() => import('./Doctor/Requests'));
+const AvailableTimings = lazy(() => import('./Doctor/AvailableTimings'));
+const MyPatients = lazy(() => import('./Doctor/MyPatients'));
+const Reviews = lazy(() => import('./Doctor/Reviews'));
+const Accounts = lazy(() => import('./Doctor/Accounts'));
+const DoctorChangePswd = lazy(() => import('./Doctor/DoctorChangePswd'));
+const DoctorProfileSettings = lazy(() => import('./Doctor/DoctorProfileSettings'));
+const DoctorPayment = lazy(() => import('./Doctor/DoctorPayment'));
+const DoctorAppointmentStart = lazy(() => import('./Doctor/DoctorAppointmentStart'));
+const DoctorDetails = lazy(() => import('./Authentication/DoctorDetails'));
+const ForgotPassword = lazy(() => import('./Authentication/ForgotPassword'));
+const DoctorRegister = lazy(() => import('./Authentication/DoctorRegister'));
+const Login = lazy(() => import('./Authentication/DocLogin'));
+const Register = lazy(() => import('./Authentication/Register'));
+const Home = lazy(() => import('./pages/Home'));
+const PatientDetails = lazy(() => import('./Authentication/PatientDetails'));
+const ResetPassword = lazy(() => import('./Authentication/ResetPassword'));
+
+const Loader = () => <><TopProgress routeLoading /><PageLoader label="Loading page..." /></>;
 
 function App() {
   const user = GetUserId()
@@ -84,6 +90,8 @@ function App() {
     }, []);
   return (
     <BrowserRouter>
+        <TopProgress />
+        <Suspense fallback={<Loader/>}>
         <Routes>
             <Route path='/signup' element={<Register/>}/>
             <Route path='/' element={type === 'doctor' ? <DoctorDefault><Home/></DoctorDefault> : <Default data={det}><Home/></Default>} />
@@ -116,16 +124,17 @@ function App() {
             <Route path='/faq' element={<Default><Faq/></Default>} />
             <Route path='/patient-dashboard' element={user ? <Default data={det}><Patientsdasboard /></Default> : <Default data={det}><LoginEmail/></Default> } />
             <Route path='/appointments' element={<Default data={det}><Appointments/></Default>} />
-            <Route path='/dependants' element={<Default data={det}><Dependants/></Default>} />
-            <Route path='/patient-invoices' element={<Default data={det}><Invoices/></Default>} />
-            <Route path='/booking/:id' element={<Default data={det}><Booking /></Default>} />
-            <Route path='/booking-success' element={<Default data={det}><BookingSuccess /></Default>} />
-            <Route path='/change-password' element={<Default data={det}><ChangePassword /></Default>} />
-            <Route path='/checkout' element={<Default data={det}><Checkout /></Default>} />
+            <Route path='/dependants' element={<RequireAuth><Default data={det}><Dependants/></Default></RequireAuth>} />
+            <Route path='/patient-invoices' element={<RequireAuth><Default data={det}><Invoices/></Default></RequireAuth>} />
+            <Route path='/booking/:id' element={<RequireAuth><Default data={det}><Booking /></Default></RequireAuth>} />
+            <Route path='/booking-success' element={<RequireAuth><Default data={det}><BookingSuccess /></Default></RequireAuth>} />
+            <Route path='/change-password' element={<RequireAuth><Default data={det}><ChangePassword /></Default></RequireAuth>} />
+            <Route path='/checkout' element={<RequireAuth><Default data={det}><Checkout /></Default></RequireAuth>} />
             <Route path='/doctor-profile/:id' element={<Default data={det}><DoctorProfile /></Default>} />
             <Route path='/doctors-list' element={<Default data={det}><DoctorsList /></Default>} />
-            <Route path='/profile-settings' element={<Default data={det}><ProfileSettings /></Default>} />
+            <Route path='/profile-settings' element={<RequireAuth><Default data={det}><ProfileSettings /></Default></RequireAuth>} />
         </Routes>
+        </Suspense>
     </BrowserRouter>
   );
 }

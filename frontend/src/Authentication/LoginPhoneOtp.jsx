@@ -13,10 +13,10 @@ const LoginPhoneOtp = () => {
 							<div class="account-content">
 								<div class="login-shapes">
 									<div class="shape-img-left">
-										<img src="assets/img/shape-01.png" alt="shape-image"/>
+										<img loading="lazy" decoding="async" src="assets/img/shape-01.png" alt="shape-image"/>
 									</div>
 									<div class="shape-img-right">
-										<img src="assets/img/shape-02.png" alt="shape-image"/>
+										<img loading="lazy" decoding="async" src="assets/img/shape-02.png" alt="shape-image"/>
 									</div>
 								</div>
 								<div class="account-info">
@@ -54,7 +54,7 @@ const LoginPhoneOtp = () => {
 										</div>
 										<div class="social-login-btn">
 											<Link to="javascript:void(0);" class="btn w-100">
-												<img src="assets/img/icons/google-icon.svg" alt="google-icon"/> Log in with Google
+												<img loading="lazy" decoding="async" src="assets/img/icons/google-icon.svg" alt="google-icon"/> Log in with Google
 											</Link>
 										</div>
 										<div class="account-signup">

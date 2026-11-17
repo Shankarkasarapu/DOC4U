@@ -151,10 +151,10 @@ const ForgotPassword = () => {
                   <div className="account-content">
                     <div className="login-shapes">
                       <div className="shape-img-left">
-                        <img src="assets/img/shape-01.png" alt="shape-image" />
+                        <img loading="lazy" decoding="async" src="assets/img/shape-01.png" alt="shape-image" />
                       </div>
                       <div className="shape-img-right">
-                        <img src="assets/img/shape-02.png" alt="shape-image" />
+                        <img loading="lazy" decoding="async" src="assets/img/shape-02.png" alt="shape-image" />
                       </div>
                     </div>
                     <div className="account-info">

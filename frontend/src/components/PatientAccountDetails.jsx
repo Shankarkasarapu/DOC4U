@@ -12,7 +12,7 @@ const PatientAccountDetails = ({details,setdetails}) => {
 				<div className="widget-profile pro-widget-content">
 				<div className="profile-info-widget">
 					<Link to="/profile-settings" className="booking-doc-img">
-						<img src={details.profileImage} alt="User Image"/>
+						<img loading="lazy" decoding="async" src={details.profileImage} alt="User Image"/>
 					</Link>
 					<div className="profile-det-info">
 						<h3><Link to="/profile-settings">{details.name}</Link></h3>

@@ -56,6 +56,18 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <!-- First-paint splash: shown instantly, removed once React mounts -->
+    <div id="d4u-splash" aria-hidden="true">
+      <img class="d4u-splash__logo" src="%PUBLIC_URL%/assets/img/logo-01.svg" alt="">
+      <span class="d4u-splash__ring"></span>
+    </div>
+    <style>
+      #d4u-splash{position:fixed;inset:0;z-index:4000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.25rem;background:#fff;transition:opacity .3s}
+      #d4u-splash .d4u-splash__logo{width:150px;animation:d4u-pulse 1.6s ease-in-out infinite}
+      #d4u-splash .d4u-splash__ring{display:inline-block;width:2rem;height:2rem;border-radius:50%;border:3px solid rgba(14,130,253,.2);border-top-color:#0e82fd;animation:d4u-spin .75s linear infinite}
+      @keyframes d4u-spin{to{transform:rotate(360deg)}}
+      @keyframes d4u-pulse{50%{transform:scale(1.06);opacity:.8}}
+    </style>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

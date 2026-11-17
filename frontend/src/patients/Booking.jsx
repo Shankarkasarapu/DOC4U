@@ -48,7 +48,13 @@ const Booking = () => {
       newDates.push(date);
     }
     setDates(newDates);
-    setSelectedDate(today);
+    // Honour ?date=YYYY-MM-DD coming from the search box if it is within the 7-day window
+    const wanted = new URLSearchParams(window.location.search).get('date');
+    const match = wanted && newDates.find((d) => {
+      const iso = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+      return iso === wanted;
+    });
+    setSelectedDate(match || today);
   };
 
   useEffect(() => {
@@ -229,7 +235,7 @@ const Booking = () => {
               <div className="profile-widget d-sm-flex">
                 <div className="doc-img col-7 col-sm-3 col-lg-3 col-xl-2 m-auto">
                   <Link to={"/doctor-profile/" + docdata._id} >
-                    <img className="img-fluid rounded-3" alt="User Image" src={docdata.image} />
+                    <img loading="lazy" decoding="async" className="img-fluid rounded-3" alt="User Image" src={docdata.image} />
                   </Link>
                 </div>
                 <div className="pro-content col-12 h-fit text-center text-sm-start ps-sm-4">

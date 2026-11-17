@@ -1,0 +1,80 @@
+/* ==========================================================================
+   Loading kit: top progress bar, spinners, skeletons, button loading state
+   ========================================================================== */
+
+/* ---------- top progress bar (driven by every axios request + route load) ---------- */
+.d4u-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 3000; pointer-events: none;
+  opacity: 0; transition: opacity .25s ease;
+}
+.d4u-progress.is-active { opacity: 1; }
+.d4u-progress__bar {
+  height: 100%; width: 0; background: linear-gradient(90deg, #0e82fd, #7dc0ff);
+  box-shadow: 0 0 10px rgba(14, 130, 253, .6); border-radius: 0 3px 3px 0;
+  transition: width .35s ease;
+}
+
+/* ---------- spinner ---------- */
+.d4u-spinner {
+  display: inline-block; width: 1.25rem; height: 1.25rem; border-radius: 50%;
+  border: 3px solid rgba(14, 130, 253, .2); border-top-color: #0e82fd;
+  animation: d4u-spin .75s linear infinite; vertical-align: -0.2em;
+}
+.d4u-spinner--lg { width: 3rem; height: 3rem; border-width: 4px; }
+.d4u-spinner--sm { width: 1rem; height: 1rem; border-width: 2px; }
+@keyframes d4u-spin { to { transform: rotate(360deg); } }
+
+/* full-area loader used for page transitions */
+.d4u-pageloader {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;
+  min-height: 60vh; color: #64748b; font-weight: 500;
+}
+.d4u-pageloader--inline { min-height: 220px; }
+
+/* ---------- button loading ---------- */
+.btn.is-loading { position: relative; pointer-events: none; opacity: .85; }
+.btn.is-loading .d4u-spinner { border-color: rgba(255,255,255,.35); border-top-color: #fff; margin-right: .5rem; }
+.btn-outline-primary.is-loading .d4u-spinner,
+.btn-link.is-loading .d4u-spinner { border-color: rgba(14,130,253,.25); border-top-color: #0e82fd; }
+
+/* ---------- skeletons ---------- */
+.sk {
+  position: relative; overflow: hidden; display: block;
+  background: #e8edf3; border-radius: 8px;
+}
+.sk::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.65) 50%, transparent 100%);
+  transform: translateX(-100%); animation: d4u-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes d4u-shimmer { to { transform: translateX(100%); } }
+.sk--line { height: 14px; margin-bottom: 10px; }
+.sk--line.w-75p { width: 75%; } .sk--line.w-50p { width: 50%; } .sk--line.w-35p { width: 35%; }
+.sk--circle { border-radius: 50%; }
+.sk--img { height: 270px; border-radius: 4px; }
+
+.sk-card {
+  background: #fff; border: 1px solid #f0f0f0; border-radius: 4px; padding: 15px; margin-bottom: 30px;
+}
+.sk-row {
+  display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #fff;
+  border: 1px solid #eef2f6; border-radius: 12px; margin-bottom: .75rem;
+}
+.sk-row > .sk-grow { flex: 1; min-width: 0; }
+
+/* ---------- content reveal ---------- */
+.d4u-fade-in { animation: d4u-fade .35s ease both; }
+@keyframes d4u-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ---------- first paint splash (lives in index.html) ---------- */
+#d4u-splash {
+  position: fixed; inset: 0; z-index: 4000; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1.25rem; background: #fff;
+}
+#d4u-splash .d4u-splash__logo { width: 150px; animation: d4u-pulse 1.6s ease-in-out infinite; }
+@keyframes d4u-pulse { 50% { transform: scale(1.06); opacity: .8; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .d4u-spinner { animation-duration: 1.6s !important; animation: d4u-spin 1.6s linear infinite !important; }
+  .sk::after { animation: none !important; }
+}

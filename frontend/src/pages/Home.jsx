@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import Carousel from 'react-bootstrap/Carousel';
 import { Accordion, Card, Navbar, } from 'react-bootstrap'
 import axios from 'axios';
-import Avatar from '@mui/material/Avatar';
 import ENDPOINT from '../data/ENDPOINT';
 import ToastNotification from '../components/Modals/ToastNotification';
 import { Link } from 'react-router-dom';
-import vid from "../assets/img/banner/banner_vedio.mp4"
+import DoctorSearch from '../components/DoctorSearch';
+import Testimonials from '../components/Testimonials';
+import { DoctorScrollerSkeleton } from '../components/Loaders';
+const vid = process.env.PUBLIC_URL + "/assets/img/banner/banner_vedio.mp4"
 
 const Home = () => {
 
     const [doctorsData, setDoctorsData] = useState([]);
+    const [docsLoading, setDocsLoading] = useState(true);
 
     const gettopdocs = async () => {
         try {
@@ -27,6 +29,8 @@ const Home = () => {
         } catch (error) {
             console.error('Error fetching top doctors:', error);
             handleToast('Network error occurred while fetching top doctors. Please check your connection.', false);
+        } finally {
+            setDocsLoading(false);
         }
     };
 
@@ -50,63 +54,33 @@ const Home = () => {
     return (
         <>
             {/* Home Banner */}
-            <section className="banner-section pt-5 position-relative">
-                {/* Video Background */}
-                <div className="video-background position-absolute top-0 start-0 w-100 h-100">
-                    <video autoPlay muted loop className="w-100 h-100 object-fit-cover">
+            <section className="banner-section hero">
+                <div className="hero__video" aria-hidden="true">
+                    <video autoPlay muted loop playsInline preload="auto">
                         <source src={vid} type="video/mp4" />
-                        Your browser does not support the video tag.
                     </video>
                 </div>
-                
-                {/* Banner Content */}
-                <div className="banner-container py-5 position-relative w-100 h-100 d-flex align-items-center" 
-                    style={{
-                        background: 'linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2))',
-                        zIndex: 1
-                    }}
-                >
-                    <div className="row align-items-center p-0 p-md-5 mx-4 w-100">
-                        <div className="col-lg-6 px-sm-5 text-white">
-                            <div className="banner-content">
-                                <h1>Find the Best Doctors Near You for Expert Care</h1>
-                                <p>Embark on your healing journey with DOC4U</p>
-                                <a href="/doctors-list" className="btn btn-primary">
-                                    Start a Consult
-                                </a>
-                            </div>
 
-                            {/* Search Box */}
-                            <div className="search-box-one bg-light p-3 rounded">
-                                <form action="/" role="search">
-                                    <div className="search-input search-line d-flex align-items-center">
-                                        <i className="feather-search bficon me-2" aria-hidden="true" />
-                                        <input type="text" className="form-control" placeholder="Search doctors, clinics, hospitals, etc." aria-label="Search doctors, clinics, hospitals" />
-                                    </div>
-                                    <div className="search-input search-map-line d-flex align-items-center mt-2">
-                                        <i className="feather-map-pin me-2" aria-hidden="true" />
-                                        <input type="text" className="form-control" placeholder="Location" aria-label="Enter location" />
-                                    </div>
-                                    <div className="search-input search-calendar-line d-flex align-items-center mt-2">
-                                        <i className="feather-calendar me-2" aria-hidden="true" />
-                                        <input type="text" className="form-control datetimepicker" placeholder="Date" aria-label="Select date" />
-                                    </div>
-                                    <div className="form-search-btn mt-3">
-                                        <button className="btn btn-primary w-100" type="submit">
-                                            Search
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                <div className="container hero__inner">
+                    <div className="hero__content">
+                        <h1>Find the Best Doctors <span>Near You</span> for Expert Care</h1>
+                        <p className="hero__lead">Embark on your healing journey with DOC4U. Search by doctor, speciality, location or date and book in minutes.</p>
+                        <div className="hero__cta">
+                            <Link to="/doctors-list" className="btn btn-primary">Start a Consult</Link>
+                            <Link to="/aboutus" className="btn btn-ghost">Learn more</Link>
+                        </div>
+
+                        {/* Search Box */}
+                        <DoctorSearch />
+
+                        <div className="hero__stats">
+                            <div><strong>15+</strong><span>Verified doctors</span></div>
+                            <div><strong>15</strong><span>Cities covered</span></div>
+                            <div><strong>24/7</strong><span>Online booking</span></div>
                         </div>
                     </div>
                 </div>
             </section>
-
-
-
-
-
             {/* /Home Banner */}
             {/* Specialities Section */}
             <section className="specialities-section-one pb-0 mt-5" id='specialities-section-one '>
@@ -286,7 +260,7 @@ const Home = () => {
             {/* /Specialities Section */}
             {/* Doctors Section */}
 
-            <section className="doctors-section ps-1 py-3" style={{ background: "#F9FAFB" }}>
+            <section className="doctors-section ps-1 py-3" >
                 <div className="container">
                     <div className="row">
                         <div className="col-md-12">
@@ -295,10 +269,11 @@ const Home = () => {
                             </div>
                         </div>
                     </div>
+                    {docsLoading && <DoctorScrollerSkeleton />}
                     <div className="doctor-slider-one d-flex justify-content-between overflow-scroll px-4">
                         {doctorsData.map((doctor) => (
                             <div
-                                key={doctor.id}
+                                key={doctor._id}
                                 className="item col-11 col-sm-7 col-md-5 col-lg-4 col-xl-3 me-3"
                             >
                                 <div className="doctor-profile-widget doc-item">
@@ -317,8 +292,8 @@ const Home = () => {
                                     <div className="doc-content">
                                         <div className="doc-pro-info">
                                             <div className="doc-pro-name">
-                                                <a href="doctor-profile.html">{doctor.name}</a>
-                                                <p>{doctor.specialization}</p>
+                                                <Link to={"/doctor-profile/" + doctor._id}>{doctor.name}</Link>
+                                                <p>{doctor.speciality}</p>
                                             </div>
                                             <div className="reviews-ratings">
                                                 <p>
@@ -453,7 +428,7 @@ const Home = () => {
 
 
             {/* FAQ Section */}
-            <section className="faq-section p-0 p-sm-4 " style={{ background: "#F9FAFB" }}>
+            <section className="faq-section p-0 p-sm-4 " >
                 <div className="container">
                     <div className="row">
                         <div className="col-md-12">
@@ -532,137 +507,7 @@ const Home = () => {
                     <div className="section-header-one">
                         <h2>Testimonials</h2>
                     </div>
-                    <Carousel indicators={false} interval={2000} className="testimonial-carousel "  >
-                        <Carousel.Item className='h-50' >
-                            <div className="testimonial-grid ">
-                                <div className="testimonial-info">
-                                    <div className="testimonial-img d-none d-md-block">
-                                        <img
-                                            src="assets/img/clients/client-01.jpg"
-                                            className="img-fluid"
-                                            alt="John Doe"
-                                        />
-                                    </div>
-                                    <div className="testimonial-content">
-                                        <div className="section-header-one section-header testimonial-header d-flex  align-items-center mb-2 ">
-                                            <Avatar src='assets/img/clients/client-01.jpg' className='me-3 d-md-none'></Avatar>
-                                            <h2 className='fs-5 '>Patient Experiences</h2>
-                                        </div>
-                                        <div className="testimonial-details text-start p-2 ps-0">
-                                            <p>
-                                                DOC4U exceeded my expectations in healthcare. The
-                                                seamless booking process, coupled with the expertise of
-                                                the doctors, made my experience exceptional. Their
-                                                commitment to quality care and convenience truly sets
-                                                them apart. I highly recommend DOC4U for anyone
-                                                seeking reliable and accessible healthcare services.
-                                            </p>
-                                            <h6>
-                                                <span className="d-block">Sai Rohith</span> Parvathipuram
-                                            </h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Carousel.Item>
-                        <Carousel.Item className='h-50'>
-                            <div className="testimonial-grid">
-                                <div className="testimonial-info ">
-                                    <div className="testimonial-img d-none d-md-block">
-                                        <img
-                                            src="assets/img/clients/client-03.jpg"
-                                            className="img-fluid"
-                                            alt="Amanda Warren"
-                                        />
-                                    </div>
-                                    <div className="testimonial-content">
-                                        <div className="section-header-one section-header testimonial-header d-flex  align-items-center mb-2 ">
-                                            <Avatar src='assets/img/clients/client-03.jpg' className='me-3 d-md-none'></Avatar>
-                                            <h2 className='fs-5 '>Patient Experiences</h2>
-                                        </div>
-                                        <div className="testimonial-details text-start p-2 ps-0">
-                                            <p>
-                                                As a busy professional, I don't have time to wait on
-                                                hold or play phone tag to schedule doctor appointments.
-                                                Thanks to DOC4U, booking appointments has never been
-                                                easier! The user-friendly interface allows me to quickly
-                                                find available appointment slots that fit my schedule
-                                                and book them with just a few clicks. It's a
-                                                game-changer for anyone looking to streamline their
-                                                healthcare management.
-                                            </p>
-                                            <h6>
-                                                <span className="d-block">Gowri Shankar</span> Vizag
-                                            </h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Carousel.Item>
-                        <Carousel.Item className='h-50'>
-                            <div className="testimonial-grid">
-                                <div className="testimonial-info ">
-                                    <div className="testimonial-img d-none d-md-block">
-                                        <img
-                                            src="assets/img/clients/client-02.jpg"
-                                            className="img-fluid"
-                                            alt="Amanda Warren"
-                                        />
-                                    </div>
-                                    <div className="testimonial-content">
-                                        <div className="section-header-one section-header testimonial-header d-flex  align-items-center mb-2 ">
-                                            <Avatar src='assets/img/clients/client-02.jpg' className='me-3 d-md-none'></Avatar>
-                                            <h2 className='fs-5 '>Patient Experiences</h2>
-                                        </div>
-                                        <div className="testimonial-details text-start p-2 ps-0">
-                                            <p>
-                                                As a student, managing my time can be challenging, especially when it comes to scheduling doctor appointments around my studies.
-                                                Thanks to DOC4U, I no longer have to waste time on long calls or wait for availability. The simple and intuitive platform makes
-                                                it easy to find appointment slots that fit into my busy schedule. I can book appointments quickly, allowing me to focus more on my academic commitments without the hassle of healthcare scheduling.                                             </p>
-                                            <h6>
-                                                <span className="d-block">Panduranga Praveen</span> Kakinada
-                                            </h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Carousel.Item>
-                        <Carousel.Item className='h-50'>
-                            <div className="testimonial-grid">
-                                <div className="testimonial-info ">
-                                    <div className="testimonial-img d-none d-md-block">
-                                        <img
-                                            src="assets/img/clients/client-11.jpg"
-                                            className="img-fluid"
-                                            alt="Amanda Warren"
-                                        />
-                                    </div>
-                                    <div className="testimonial-content">
-                                        <div className="section-header-one section-header testimonial-header d-flex  align-items-center mb-2 ">
-                                            <Avatar src='assets/img/clients/client-11.jpg' className='me-3 d-md-none'></Avatar>
-                                            <h2 className='fs-5 '>Patient Experiences</h2>
-                                        </div>
-                                        <div className="testimonial-details text-start p-2 ps-0">
-                                            <p>
-                                                As a parent, coordinating doctor appointments for my
-                                                family can be overwhelming. DOC4U has simplified the
-                                                process and made scheduling appointments a breeze! I
-                                                love being able to see all available appointment times
-                                                in one place and book appointments for multiple family
-                                                members with ease. Plus, the automatic reminders ensure
-                                                we never miss an appointment. I highly recommend DOC4U
-                                                to other busy parents!
-                                            </p>
-                                            <h6>
-                                                <span className="d-block">Niya Patel</span> New York
-                                            </h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Carousel.Item>
-
-                    </Carousel>
+                    <Testimonials />
                 </div>
             </section>
             {/* /Testimonial Section */}

@@ -146,7 +146,7 @@ const DoctorHeader = () => {
                     <Offcanvas.Header closeButton >
                         <Offcanvas.Title>
                             <Link>
-                            <img src="assets/img/logo-01.svg" alt="logo" />
+                            <img loading="lazy" decoding="async" src="assets/img/logo-01.svg" alt="logo" />
                             </Link>
                         </Offcanvas.Title>
                     </Offcanvas.Header>

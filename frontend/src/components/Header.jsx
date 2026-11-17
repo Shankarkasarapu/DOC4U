@@ -1,196 +1,156 @@
 import React, { useState } from "react";
-import '../App.css'
+import '../App.css';
+import './Header.css';
 import Offcanvas from 'react-bootstrap/Offcanvas';
-import { Link } from 'react-router-dom'; 
 import Dropdown from 'react-bootstrap/Dropdown';
-import { DropdownDivider } from "react-bootstrap";
+import { Link, useLocation } from 'react-router-dom';
 import GetUserId from "../data/GetUserID";
-    const Header = ({det}) => {
-        const user = GetUserId()
-        const [show, setShow] = useState(false);
 
-        const handleClose = () => setShow(false);
-        const handleShow = () => setShow(true);
-        const [isDoctorsOpen, setIsDoctorsOpen] = useState(false);
-        const [isBlogOpen, setIsBlogOpen] = useState(false);
-        const [isPatientsOpen, setIsPatientsOpen] = useState(false);
-        const [isDoctorProfileOpen, setIsDoctorProfileOpen] = useState(false);
-        const [isBookingOpen, setIsBookingOpen] = useState(false);
-        const [isPagesOpen, setIsPagesOpen] = useState(false);
-        const [isInvoicesOpen, setIsInvoicesOpen] = useState(false);
-        const [isAuthenticationOpen, setIsAuthenticationOpen] = useState(false);
-        const [activeItem, setActiveItem] = useState("home");
+const NAV = [
+    { to: '/', label: 'Home' },
+    { to: '/doctors-list', label: 'Doctors' },
+    { to: '/aboutus', label: 'About Us' },
+    { to: '/contactus', label: 'Contact Us' },
+];
 
-        // Function to handle menu item click
-        const handleActiveItem = (item) => {
-            setActiveItem(item);
-        };
-        const logout =() =>{
-            localStorage.removeItem('user_id')
-            window.location.replace('/login')
-        }
+// Photo if we have one, otherwise a clean initial, so there is never a broken image
+const Avatar = ({ src, name, size = 36 }) => {
+    const [failed, setFailed] = useState(false);
+    const initial = (name || 'U').trim().charAt(0).toUpperCase();
+    return src && !failed ? (
+        <img className="hdr-avatar" src={src} alt="" width={size} height={size} onError={() => setFailed(true)} />
+    ) : (
+        <span className="hdr-avatar hdr-avatar--initial" style={{ width: size, height: size, fontSize: size * 0.42 }} aria-hidden="true">{initial}</span>
+    );
+};
 
-        return (
+const Header = ({ det }) => {
+    const user = GetUserId();
+    const { pathname } = useLocation();
+    const [show, setShow] = useState(false);
+    const close = () => setShow(false);
 
-            <>
-                {/* Main Wrapper */}
-                <div className="main-wrapper home-one">
-                    {/* Header */}
-                    <header className="header header-custom header-fixed header-one home-head-one">
-                        <div className="container">
-                            <nav className="navbar navbar-expand-lg header-nav">
-                                <div className="navbar-header text-start">
-                                    <a id="mobile_btn" onClick={handleShow}>
-                                        <span className="bar-icon" >
-                                            <span />
-                                            <span />
-                                            <span />
-                                        </span>
-                                    </a>
-                                    <Link to="/" className="navbar-brand logo ">
-                                        <img
-                                            src='/assets/img/logo-01.svg'
-                                            className="img-fluid"
-                                            alt="Logo"
-                                        />
-                                    </Link>
-                                </div>
-                                <div className="main-menu-wrapper">
-                                    <div className="menu-header">
+    const name = det?.name || 'My account';
+    const isActive = (to) => (to === '/' ? pathname === '/' : pathname.startsWith(to));
 
-                                        <a
-                                            id="menu_close"
-                                            className="menu-close"
-                                            href=""
-                                        >
-                                            <i className="fas fa-times" />
-                                        </a>
-                                    </div>
-                                    <ul className="main-nav ">
-                                        <li className={`has-submenu megamenu ${activeItem === 'home' ? 'active' : ''}`}>
-                                            <Link to="/" onClick={() => handleActiveItem("home")}>Home </Link>
-                                        </li>
-                                        <li className={`has-submenu ${activeItem === 'doctors' ? 'active' : ''}`}>
-                                            <Link to="/doctors-list" onClick={() => handleActiveItem("doctors")}>Doctors </Link>
-                                        </li>
-                                        <li className={`has-submenu ${activeItem === 'about' ? 'active' : ''}`}>
-                                            <Link to="/aboutus" onClick={() => handleActiveItem("about")}>About Us</Link>
-                                        </li>
-                                        <li className={`has-submenu ${activeItem === 'contact' ? 'active' : ''}`}>
-                                            <Link to="/contactus" onClick={() => handleActiveItem("contact")}>Contact Us</Link>
-                                        </li>
-                                    </ul>
-                                </div>
-                                {user ?
-                                <>
-                                    <Dropdown align="end" className="nav-item dropdown has-arrow logged-item d-md-none d-sm-none d-lg-flex d-xl-flex d-none">
-                                        <Dropdown.Toggle as="a" href="#" className="dropdown-toggle nav-link">
-                                            <span className="user-img">
-                                            <img
-                                                className="rounded-circle"
-                                                src={det.profileImage}
-                                                width={31}
-                                                alt={det.name}
-                                            />
-                                            </span>
-                                        </Dropdown.Toggle>
-
-                                        <Dropdown.Menu className='p-2 dropdown'>
-                                            <div className="user-header d-flex">
-                                            <div className="avatar avatar-sm">
-                                                <img
-                                                src={det.profileImage}
-                                                alt="User Image"
-                                                className="avatar-img rounded-circle p-1"
-                                                />
-                                            </div>
-                                            <div className="user-text p-1">
-                                                <h6 className='mb-0'>{det.name}</h6>
-                                                <p className="text-success mb-0">Available</p>
-                                            </div>
-                                            </div>
-                                            <Dropdown.Item href="/patient-dashboard">Dashboard</Dropdown.Item>
-                                            <Dropdown.Item href="/profile-settings">Profile Settings</Dropdown.Item>
-                                            <DropdownDivider/>
-                                            <Dropdown.Item onClick={()=>{logout()}}>Logout</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </>:
-                                <>
-                                    <ul className="nav header-navbar-rht">
-                                        <li className="register-btn">
-                                            <Link to="/signup" className="btn reg-btn">
-                                                <i className="feather-user" />
-                                                Register
-                                            </Link>
-                                        </li>
-                                        <li className="register-btn">
-                                            <Link to ="/login" className="btn btn-primary log-btn">
-                                                <i className="feather-lock" />
-                                                Login
-                                            </Link>
-                                        </li>
-                                    </ul>
-                                </>}
-                            </nav>
-                        </div>
-                    </header>
-                    {/* /Header */}
-
-
-                    {/* Cursor */}
-                    <div className="mouse-cursor cursor-outer" />
-                    <div className="mouse-cursor cursor-inner" />
-                    {/* /Cursor */}
-                </div>
-                {/* /Main Wrapper */}
-                {/* ScrollToTop */}
-                <Offcanvas show={show} onHide={handleClose} placement="start" className="offcanvas">
-                    <Offcanvas.Header closeButton  className="pb-1 mb-1">
-                        <Offcanvas.Title>
-                            <Link>
-                            <img src="/assets/img/logo-01.svg" alt="logo" />
-                            </Link>
-                        </Offcanvas.Title>
-                    </Offcanvas.Header>
-                    <Offcanvas.Body className="ps-0 pe-0">
-                    <div className="sidebar ps-4">
-                        <div className="menu-item">
-                            <Link to="/" className="list">Home</Link>
-                        </div>
-
-                        {/* Doctors Dropdown */}
-                        <div className="menu-item">
-                            <Link to="/doctors-list" className="list">Doctors</Link>
-                        </div>
-
-                        {/* Patients Dropdown */}
-                        <div className="menu-item">
-                            <Link to="about-us.html" className="list">About Us</Link>
-                        </div>
-                        <div className="menu-item">
-                            <Link to="contact-us.html" className="list">Contact Us</Link>
-                        </div>
-                        
-                        {/* Pages Dropdown */}
-                        
-                        {user?
-                        <>
-                            <div className="menu-item">
-                                <Link to="/patientdashboard" className="list">Account</Link>
-                            </div>
-                        </>:
-                        <>
-                            <div className="menu-item login-link">
-                                <Link to="/login" className="list">Login / Signup</Link>
-                            </div>
-                        </>}
-                        </div>
-                    </Offcanvas.Body>
-                </Offcanvas>
-            </>
-
-        );
+    const logout = () => {
+        localStorage.removeItem('user_id');
+        window.location.replace('/login');
     };
+
+    return (
+        <>
+            <div className="main-wrapper home-one">
+                <header className="header header-custom header-fixed header-one home-head-one">
+                    <div className="container">
+                        <nav className="navbar navbar-expand-lg header-nav" aria-label="Main">
+                            <div className="navbar-header text-start">
+                                <button type="button" id="mobile_btn" className="hdr-burger" onClick={() => setShow(true)} aria-label="Open menu" aria-expanded={show}>
+                                    <span className="bar-icon"><span /><span /><span /></span>
+                                </button>
+                                <Link to="/" className="navbar-brand logo">
+                                    <img src="/assets/img/logo-01.svg" className="img-fluid" alt="DOC4U home" />
+                                </Link>
+                            </div>
+
+                            <div className="main-menu-wrapper">
+                                <ul className="main-nav">
+                                    {NAV.map((n) => (
+                                        <li key={n.to} className={`has-submenu ${isActive(n.to) ? 'active' : ''}`}>
+                                            <Link to={n.to} aria-current={isActive(n.to) ? 'page' : undefined}>{n.label}</Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            {user ? (
+                                /* Visible on every screen size (it used to be hidden below 992px) */
+                                <Dropdown align="end" className="hdr-user">
+                                    <Dropdown.Toggle as="button" type="button" className="hdr-user__toggle" aria-label="Account menu">
+                                        <Avatar src={det?.profileImage} name={name} />
+                                        <span className="hdr-user__name d-none d-xl-inline">{name}</span>
+                                        <i className="feather-chevron-down d-none d-md-inline" aria-hidden="true" />
+                                    </Dropdown.Toggle>
+
+                                    <Dropdown.Menu className="hdr-user__menu">
+                                        <div className="hdr-user__head">
+                                            <Avatar src={det?.profileImage} name={name} size={44} />
+                                            <div>
+                                                <strong>{name}</strong>
+                                                {det?.email && <small>{det.email}</small>}
+                                            </div>
+                                        </div>
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item as={Link} to="/patient-dashboard"><i className="feather-grid" aria-hidden="true" /> Dashboard</Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/appointments"><i className="feather-calendar" aria-hidden="true" /> Appointments</Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/profile-settings"><i className="feather-settings" aria-hidden="true" /> Profile settings</Dropdown.Item>
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item as="button" onClick={logout} className="hdr-user__logout"><i className="feather-log-out" aria-hidden="true" /> Logout</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            ) : (
+                                <ul className="nav header-navbar-rht">
+                                    <li className="register-btn d-none d-sm-block">
+                                        <Link to="/signup" className="btn reg-btn"><i className="feather-user" /> Register</Link>
+                                    </li>
+                                    <li className="register-btn">
+                                        <Link to="/login" className="btn btn-primary log-btn"><i className="feather-lock" /> Login</Link>
+                                    </li>
+                                </ul>
+                            )}
+                        </nav>
+                    </div>
+                </header>
+
+                {/* Cursor */}
+                <div className="mouse-cursor cursor-outer" />
+                <div className="mouse-cursor cursor-inner" />
+            </div>
+
+            {/* Mobile / tablet menu */}
+            <Offcanvas show={show} onHide={close} placement="start" className="hdr-offcanvas" aria-label="Menu">
+                <Offcanvas.Header closeButton>
+                    <Offcanvas.Title as="div">
+                        <Link to="/" onClick={close}><img decoding="async" src="/assets/img/logo-01.svg" alt="DOC4U home" /></Link>
+                    </Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    {user && (
+                        <div className="hdr-off__user">
+                            <Avatar src={det?.profileImage} name={name} size={48} />
+                            <div>
+                                <strong>{name}</strong>
+                                {det?.email && <small>{det.email}</small>}
+                            </div>
+                        </div>
+                    )}
+
+                    <nav className="hdr-off__nav" aria-label="Mobile">
+                        {NAV.map((n) => (
+                            <Link key={n.to} to={n.to} onClick={close} className={isActive(n.to) ? 'is-active' : ''} aria-current={isActive(n.to) ? 'page' : undefined}>
+                                {n.label}
+                            </Link>
+                        ))}
+                    </nav>
+
+                    <div className="hdr-off__foot">
+                        {user ? (
+                            <>
+                                <Link to="/patient-dashboard" onClick={close} className="btn btn-primary w-100">Dashboard</Link>
+                                <Link to="/profile-settings" onClick={close} className="btn btn-outline-primary w-100">Profile settings</Link>
+                                <button type="button" className="btn btn-link text-danger w-100" onClick={logout}>Logout</button>
+                            </>
+                        ) : (
+                            <>
+                                <Link to="/login" onClick={close} className="btn btn-primary w-100">Login</Link>
+                                <Link to="/signup" onClick={close} className="btn btn-outline-primary w-100">Register</Link>
+                            </>
+                        )}
+                    </div>
+                </Offcanvas.Body>
+            </Offcanvas>
+        </>
+    );
+};
 
 export default Header;

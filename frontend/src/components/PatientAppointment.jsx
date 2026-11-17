@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { ListSkeleton } from './Loaders'
 import GetUserID from '../data/GetUserID'
 import axios from 'axios'
 import ENDPOINT from '../data/ENDPOINT'
@@ -7,18 +8,19 @@ import moment from 'moment';
 
 const PatientAppointment = () => {
 	const [appoint,setappoint] = useState([])
+	const [apLoading,setApLoading] = useState(true)
 	const user = GetUserID()
 	const getappointments = async() =>{
 		var data = new FormData()
 		data.append('user_id',user)
-		var res = await axios.post(ENDPOINT + 'get-user-appointments',data,SecurityHeaders)
-		if(res){
-			if(res.data.status==='success')
+		try {
+			var res = await axios.post(ENDPOINT + 'get-user-appointments',data,SecurityHeaders)
+			if(res && res.data.status==='success')
 			{
-				console.log(res)
-				setappoint(res.data.appointments)
+				setappoint(res.data.appointments || [])
 			}
-		}
+		} catch (e) { console.error(e) }
+		finally { setApLoading(false) }
 	}
 	useEffect(()=>{
 		getappointments()
@@ -75,12 +77,12 @@ const PatientAppointment = () => {
 									</a>
 								</li>
 							</ul> */}
-							{appoint ? appoint.map((item)=>(
-								<div className="appointment-dash-card">
+							{apLoading ? <ListSkeleton rows={2} /> : appoint ? appoint.map((item)=>(
+								<div className="appointment-dash-card d4u-fade-in">
 								<div className="doctor-fav-list">
 									<div className="doctor-info-profile">
 										<a href="#" className="table-avatar">
-											<img src={item.doctor.image} alt="Img"/>
+											<img loading="lazy" decoding="async" src={item.doctor.image} alt="Img"/>
 										</a>
 										<div className="doctor-name-info">
 											<h5><a href="#">{item.doctor.name}</a></h5>

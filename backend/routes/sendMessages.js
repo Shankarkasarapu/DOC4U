@@ -1,61 +1,49 @@
 const express = require("express");
-const router = express.Router();
-const { connectToDatabase } = require("../mongodb/connectDB");
-const nodemailer = require("nodemailer");
 const multer = require("multer");
+const transporter = require("../nodemailer/nodemailer");
+
+const router = express.Router();
 const upload = multer();
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+// Strip CR/LF so user input can never inject extra mail headers
+const clean = (v, max) => String(v || "").replace(/[\r\n]+/g, " ").trim().slice(0, max);
+
 router.post("/send-messages", upload.none(), async (req, res) => {
+  const name = clean(req.body.name, 100);
+  const mail = clean(req.body.mail, 150);
+  const phone = clean(req.body.phone_no, 20);
+  const services = clean(req.body.services, 100);
+  const message = String(req.body.message || "").trim().slice(0, 1000);
+
+  if (!name || !mail || !phone || !services || !message) {
+    return res.status(400).json({ status: "error", message: "All fields are required" });
+  }
+  if (!EMAIL_RE.test(mail)) {
+    return res.status(400).json({ status: "error", message: "Please enter a valid email address" });
+  }
+
   try {
-    const { mail, name, phone_no, services, message } = req.body;
-
-    // Validate input fields
-    if (!mail || !name || !phone_no || !services || !message) {
-      return res.status(400).json({
-        status: "error",
-        message: "All fields are required",
-      });
-    }
-
-const transporter = require("../nodemailer/nodemailer")
-    const mailOptions = {
-      from: "doc4u@gmail.com",
+    await transporter.sendMail({
+      from: `"DOC4U Website" <${process.env.EMAIL_USER}>`,
       to: "docforyouhelpdesk@gmail.com",
-      subject: "Support Request Notification",
-      text: `Dear Admin,
-              You have received a new support request from ${name} through the website.
-              Details of the request:
-              Name: ${name}
-              Email: ${mail}
-              Phone: ${phone_no}
-              Subject: ${services}
-              Message: ${message}
-              Please review and respond to the request at your earliest convenience.
-              Best regards,
-              DOC4U Team`,
-    };
+      replyTo: `"${name.replace(/"/g, "")}" <${mail}>`,   // hitting Reply answers the visitor directly
+      subject: `[DOC4U Support] ${services} - ${name}`,
+      text: `New support request from the website.
 
-    // Send email to admin
-    transporter.sendMail(mailOptions, (emailError, info) => {
-      if (emailError) {
-        console.error("Error sending email:", emailError);
-        return res.status(500).json({
-          status: "error",
-          message: "Internal server error sending support request email",
-        });
-      }
+Name:    ${name}
+Email:   ${mail}
+Phone:   ${phone}
+Topic:   ${services}
 
-      return res.status(200).json({
-        status: "success",
-        message: "Support request email sent to admin",
-      });
+Message:
+${message}
+`,
     });
+    return res.status(200).json({ status: "success", message: "Support request sent" });
   } catch (error) {
-    console.error("Error processing the request:", error);
-    res.status(500).json({
-      status: "error",
-      message: "Internal server error",
-    });
+    console.error("Error sending support email:", error);
+    return res.status(500).json({ status: "error", message: "We couldn't send your message right now. Please try again." });
   }
 });
 

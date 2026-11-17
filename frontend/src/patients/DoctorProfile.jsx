@@ -1,4 +1,5 @@
-import { CircularProgress, Rating } from '@mui/material'
+import { Rating } from '@mui/material'
+import { PageLoader } from '../components/Loaders'
 import axios from 'axios'
 import doc from 'localbase/localbase/api/selectors/doc'
 import React, { useEffect, useState } from 'react'
@@ -404,7 +405,7 @@ const [toast, setToast] = useState({
       </div>
     </div>
     </>:<>
-    <CircularProgress size={40} className='text-center'/>
+    <PageLoader label="Loading doctor profile..." />
     </>}
 
 

@@ -420,7 +420,7 @@ const MyPatients = () => {
                         <div className="appointment-grid-head">
                           <div className="patinet-information">
                             <Link to="patient-profile.html">
-                              <img src="assets/img/doctors-dashboard/profile-01.jpg" alt="User Image"/>
+                              <img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-01.jpg" alt="User Image"/>
                             </Link>
                             <div className='d-flex'>
                                 <div className="patient-info">
@@ -461,7 +461,7 @@ const MyPatients = () => {
                         <div className="appointment-grid-head">
                           <div className="patinet-information">
                             <Link to="patient-profile.html">
-                              <img src="assets/img/doctors-dashboard/profile-02.jpg" alt="User Image" />
+                              <img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-02.jpg" alt="User Image" />
                             </Link>
                             <div className='d-flex justify-content-between'>
                                 <div className="patient-info">

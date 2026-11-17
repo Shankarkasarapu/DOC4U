@@ -154,7 +154,7 @@ const Aboutus = () => {
                                     <div className="way-shapes-img">
 
                                         <div className="way-shapes-right">
-                                            <img src="assets/img/shape-07.png" alt="shape-image" />
+                                            <img loading="lazy" decoding="async" src="assets/img/shape-07.png" alt="shape-image" />
                                         </div>
                                     </div>
                                     <div className="row align-items-end">

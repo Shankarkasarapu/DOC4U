@@ -6,7 +6,6 @@ router.post("/top-doctors", async (req, res) => {
   try {
     const database = await connectToDatabase();
     const doctors = await database.collection("Doctors_data").find({}).limit(6).toArray();
-    console.log(doctors)
 
     if (doctors.length) {
       res.status(200).json({

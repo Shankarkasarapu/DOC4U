@@ -182,7 +182,7 @@ const DoctorProfileSettings = () => {
         <div className="change-avatar img-upload">
           <div className="profile-img">
             {selectedImage ? (
-              <img src={selectedImage} alt="Profile" className="profile-preview" />
+              <img loading="lazy" decoding="async" src={selectedImage} alt="Profile" className="profile-preview" />
             ) : (
               <i className="fa-solid fa-file-image" />
             )}

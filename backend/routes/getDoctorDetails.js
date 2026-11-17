@@ -1,19 +1,21 @@
-const express = require('express');
-const router = express.Router()
-const {connectToDatabase} = require("../mongodb/connectDB")
-router.post("/get-doctors",async (req,res)=>{
-  const database = await connectToDatabase()
-  const collection = database.collection('Doctors_data');
-    const data = await collection.find({}).toArray();
+const express = require("express");
+const router = express.Router();
+const { connectToDatabase } = require("../mongodb/connectDB");
+
+router.post("/get-doctors", async (req, res) => {
+  try {
+    const database = await connectToDatabase();
+    const data = await database.collection("Doctors_data").find({}).toArray();
 
     if (data.length === 0) {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.write(JSON.stringify({ message: 'No doctors found' }));
-    } else {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.write(JSON.stringify({ status: "success", data: data }));
+      return res.status(404).json({ message: "No doctors found" });
     }
-    res.end(); 
-    
-})
-module.exports=router
+    res.set("Cache-Control", "public, max-age=60");
+    return res.status(200).json({ status: "success", data });
+  } catch (error) {
+    console.error("Error fetching doctors:", error);
+    return res.status(500).json({ status: "error", message: "Internal server error" });
+  }
+});
+
+module.exports = router;

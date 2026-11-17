@@ -1,0 +1,61 @@
+/* ---------- burger (now a real button) ---------- */
+.hdr-burger { background: none; border: 0; padding: 8px; margin-right: 4px; cursor: pointer; }
+.hdr-burger:focus-visible { outline: 3px solid rgba(14,130,253,.45); border-radius: 8px; }
+
+/* ---------- avatar ---------- */
+.hdr-avatar { border-radius: 50%; object-fit: cover; flex: none; display: inline-block; }
+.hdr-avatar--initial {
+  display: inline-grid; place-items: center; background: #0e82fd; color: #fff; font-weight: 700; line-height: 1;
+}
+
+/* ---------- user dropdown (all devices) ---------- */
+.hdr-user { margin-left: auto; position: relative; }
+.hdr-user__toggle {
+  display: inline-flex; align-items: center; gap: .5rem; padding: 4px 10px 4px 4px;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 999px; cursor: pointer;
+  color: #0f172a; font-weight: 600; font-size: .9375rem; transition: border-color .15s, box-shadow .15s;
+}
+.hdr-user__toggle::after { display: none; }                 /* drop bootstrap's default caret */
+.hdr-user__toggle:hover,
+.hdr-user__toggle[aria-expanded="true"] { border-color: #0e82fd; box-shadow: 0 0 0 3px rgba(14,130,253,.12); }
+.hdr-user__toggle:focus-visible { outline: 3px solid rgba(14,130,253,.45); outline-offset: 2px; }
+.hdr-user__toggle > i { font-size: .875rem; color: #64748b; }
+.hdr-user__name { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.hdr-user__menu {
+  min-width: 260px; padding: .5rem; border: 1px solid #e2e8f0; border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(15,23,42,.16); margin-top: 10px !important;
+}
+.hdr-user__head { display: flex; align-items: center; gap: .75rem; padding: .5rem .5rem .25rem; }
+.hdr-user__head strong, .hdr-off__user strong { display: block; color: #0f172a; }
+.hdr-user__head small, .hdr-off__user small { display: block; color: #64748b; font-size: .8125rem; word-break: break-all; }
+.hdr-user__menu .dropdown-item {
+  display: flex; align-items: center; gap: .625rem; padding: .625rem .75rem; border-radius: 8px;
+  color: #334155; font-weight: 500;
+}
+.hdr-user__menu .dropdown-item i { width: 18px; color: #64748b; }
+.hdr-user__menu .dropdown-item:hover { background: #eaf3ff; color: #0e82fd; }
+.hdr-user__menu .dropdown-item:hover i { color: #0e82fd; }
+.hdr-user__menu .hdr-user__logout { color: #dc2626; }
+.hdr-user__menu .hdr-user__logout i { color: #dc2626; }
+.hdr-user__menu .hdr-user__logout:hover { background: #fef2f2; color: #dc2626; }
+
+/* keep the dropdown inside the screen on small phones */
+@media (max-width: 575px) {
+  .hdr-user__toggle { padding: 2px; border-radius: 50%; }
+  .hdr-user__menu { min-width: min(280px, calc(100vw - 32px)); }
+}
+
+/* ---------- mobile / tablet offcanvas ---------- */
+.hdr-offcanvas { width: min(320px, 86vw) !important; }
+.hdr-offcanvas .offcanvas-header { border-bottom: 1px solid #e2e8f0; }
+.hdr-offcanvas .offcanvas-header img { height: 36px; width: auto; }
+.hdr-offcanvas .offcanvas-body { display: flex; flex-direction: column; padding: 1rem; }
+.hdr-off__user { display: flex; align-items: center; gap: .75rem; padding: .75rem; margin-bottom: .75rem; background: #f8fafc; border-radius: 12px; }
+.hdr-off__nav { display: grid; gap: .25rem; }
+.hdr-off__nav a {
+  padding: .875rem 1rem; border-radius: 10px; color: #334155; font-weight: 600; font-size: 1.0625rem;
+}
+.hdr-off__nav a:hover { background: #f1f5f9; }
+.hdr-off__nav a.is-active { background: #eaf3ff; color: #0e82fd; }
+.hdr-off__foot { margin-top: auto; padding-top: 1.25rem; display: grid; gap: .625rem; }

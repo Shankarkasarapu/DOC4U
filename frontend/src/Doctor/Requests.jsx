@@ -30,7 +30,7 @@ const Requests = () => {
 								<div className="widget-profile pro-widget-content">
 									<div className="profile-info-widget">
 										<Link to="doctor-profile.html" className="booking-doc-img">
-											<img src="assets/img/doctors-dashboard/doctor-profile-img.jpg" alt="User Image"/>
+											<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/doctor-profile-img.jpg" alt="User Image"/>
 										</Link>
 										<div className="profile-det-info">
 											<h3><Link to="doctor-profile.html">Dr Edalin Hendry</Link></h3>
@@ -166,7 +166,7 @@ const Requests = () => {
 									<li>
 										<div className="patinet-information">
 											<Link to="patient-profile.html">
-												<img src="assets/img/doctors-dashboard/profile-01.jpg" alt="User Image"/>
+												<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-01.jpg" alt="User Image"/>
 											</Link>
 											<div className="patient-info">
 												<p>#Apt0001</p>
@@ -201,7 +201,7 @@ const Requests = () => {
 									<li>
 										<div className="patinet-information">
 											<Link to="patient-profile.html">
-												<img src="assets/img/doctors-dashboard/profile-02.jpg" alt="User Image"/>
+												<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-02.jpg" alt="User Image"/>
 											</Link>
 											<div className="patient-info">
 												<p>#Apt0002</p>
@@ -237,7 +237,7 @@ const Requests = () => {
 									<li>
 										<div className="patinet-information">
 											<Link to="patient-profile.html">
-												<img src="assets/img/doctors-dashboard/profile-03.jpg" alt="User Image"/>
+												<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-03.jpg" alt="User Image"/>
 											</Link>
 											<div className="patient-info">
 												<p>#Apt0003</p>
@@ -272,7 +272,7 @@ const Requests = () => {
 									<li>
 										<div className="patinet-information">
 											<Link to="patient-profile.html">
-												<img src="assets/img/doctors-dashboard/profile-06.jpg" alt="User Image"/>
+												<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-06.jpg" alt="User Image"/>
 											</Link>
 											<div className="patient-info">
 												<p>#Apt0004</p>
@@ -307,7 +307,7 @@ const Requests = () => {
 									<li>
 										<div className="patinet-information">
 											<Link to="patient-profile.html">
-												<img src="assets/img/doctors-dashboard/profile-05.jpg" alt="User Image"/>
+												<img loading="lazy" decoding="async" src="assets/img/doctors-dashboard/profile-05.jpg" alt="User Image"/>
 											</Link>
 											<div className="patient-info">
 												<p>#Apt0005</p>

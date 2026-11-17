@@ -13,7 +13,7 @@ const Footer1 = () => {
                                 <div className="footer-widget footer-about">
                                     <div className="footer-logo">
                                         <Link to="/">
-                                            <img src="/assets/img/logo-01.svg" alt="logo" />
+                                            <img loading="lazy" decoding="async" src="/assets/img/logo-01.svg" alt="logo" />
                                         </Link>
                                     </div>
                                     <div className="footer-about-content">

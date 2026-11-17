@@ -37,7 +37,7 @@ const InvoiceModal = ({ show, handleClose }) => {
             <div className="row">
               <div className="col-md-6">
                 <div className="invoice-logo">
-                  <img src="/assets/img/logo-01.svg" alt="logo" />
+                  <img loading="lazy" decoding="async" src="/assets/img/logo-01.svg" alt="logo" />
                 </div>
               </div>
               <div className="col-md-6">

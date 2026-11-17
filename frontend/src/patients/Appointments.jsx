@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { ListSkeleton } from '../components/Loaders'
 import { Link } from 'react-router-dom'
 import GetUserId from '../data/GetUserID';
 import axios from 'axios';
@@ -30,18 +31,19 @@ const Appointments = () => {
 
 
   const [appoint,setappoint] = useState([])
+  const [apLoading,setApLoading] = useState(true)
 	const user = GetUserID()
 	const getappointments = async() =>{
 		var data = new FormData()
 		data.append('user_id',user)
-		var res = await axios.post(ENDPOINT + 'get-user-appointments',data,SecurityHeaders)
-		if(res){
-			if(res.data.status==='success')
+		try {
+			var res = await axios.post(ENDPOINT + 'get-user-appointments',data,SecurityHeaders)
+			if(res && res.data.status==='success')
 			{
-				console.log(res)
-				setappoint(res.data.appointments)
+				setappoint(res.data.appointments || [])
 			}
-		}
+		} catch (e) { console.error(e) }
+		finally { setApLoading(false) }
 	}
 	useEffect(()=>{
 		getappointments()
@@ -422,8 +424,8 @@ const Appointments = () => {
           role="tabpanel"
           aria-labelledby="pills-upcoming-tab"
         >
-        {appoint ? appoint.map((item)=>(
-              <div className="appointment-wrap">
+        {apLoading ? <ListSkeleton rows={3} /> : appoint ? appoint.map((item)=>(
+              <div className="appointment-wrap d4u-fade-in">
                 <ul>
                   <li>
                     <div className="patinet-information">

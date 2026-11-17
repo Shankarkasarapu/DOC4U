@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { ListSkeleton } from '../components/Loaders'
 import { Link } from 'react-router-dom'
 import AddDependendantmodal from '../components/Modals/AddDependendantmodal'
 import EditDependantmodal from '../components/Modals/EditDependantmodal';
@@ -17,6 +18,7 @@ const Dependants = () => {
 
   const [activeTab, setActiveTab] = useState('upcoming');
     const [details,setdetails] = useState([]) 
+    const [dLoading,setDLoading] = useState(true)
 	const user_id = GetUserId();
 	const getDetails = async () => {
     try {
@@ -33,7 +35,7 @@ const Dependants = () => {
       console.error('Error fetching user details:', error.message || error);
     }
   };
-	useEffect(()=>{getDetails()},[])
+	useEffect(()=>{getDetails().finally(()=>setDLoading(false))},[])
   return (
     <>
     <AddDependendantmodal show={modalShow} handleClose={handleClose}/>
@@ -180,7 +182,7 @@ const Dependants = () => {
               Add Dependants
             </a>
           </div>
-          {details.dependants ? 
+          {dLoading ? <ListSkeleton rows={3} /> : details.dependants ? 
               details.dependants.map((item)=>(
                   <DependantItem item={item}/>
               ))

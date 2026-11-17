@@ -11,10 +11,10 @@ const DoctorSignup = () => {
 							<div class="account-content">
 								<div class="login-shapes">
 									<div class="shape-img-left">
-										<img src="assets/img/shape-01.png" alt="shape-image"/>
+										<img loading="lazy" decoding="async" src="assets/img/shape-01.png" alt="shape-image"/>
 									</div>
 									<div class="shape-img-right">
-										<img src="assets/img/shape-02.png" alt="shape-image"/>
+										<img loading="lazy" decoding="async" src="assets/img/shape-02.png" alt="shape-image"/>
 									</div>
 								</div>
 								<div class="widget-set">
@@ -34,7 +34,7 @@ const DoctorSignup = () => {
 															<div class="step-box">
 																<div class="step-icon">
 																	<span>
-																		<img src="assets/img/icons/signup-users.svg" alt="icon"/>
+																		<img loading="lazy" decoding="async" src="assets/img/icons/signup-users.svg" alt="icon"/>
 																	</span>
 																</div>
 																<div class="step-content">
@@ -47,7 +47,7 @@ const DoctorSignup = () => {
 															<div class="step-box">
 																<div class="step-icon">
 																	<span>
-																		<img src="assets/img/icons/signup-unlock.svg" alt="icon"/>
+																		<img loading="lazy" decoding="async" src="assets/img/icons/signup-unlock.svg" alt="icon"/>
 																	</span>
 																</div>
 																<div class="step-content">
@@ -100,7 +100,7 @@ const DoctorSignup = () => {
 															<div class="step-box">
 																<div class="step-icon">
 																	<span>
-																		<img src="assets/img/icons/signup-users.svg" alt="icon"/>
+																		<img loading="lazy" decoding="async" src="assets/img/icons/signup-users.svg" alt="icon"/>
 																	</span>
 																</div>
 																<div class="step-content">
@@ -113,7 +113,7 @@ const DoctorSignup = () => {
 															<div class="step-box">
 																<div class="step-icon">
 																	<span>
-																		<img src="assets/img/icons/signup-unlock.svg" alt="icon"/>
+																		<img loading="lazy" decoding="async" src="assets/img/icons/signup-unlock.svg" alt="icon"/>
 																	</span>
 																</div>
 																<div class="step-content">
