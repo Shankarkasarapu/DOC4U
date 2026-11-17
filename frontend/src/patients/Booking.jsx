@@ -10,6 +10,7 @@ import { CircularProgress, Rating } from '@mui/material'
 import { Button, Modal } from 'react-bootstrap'
 import ToastNotification from '../components/Modals/ToastNotification'
 import GetUserID from '../data/GetUserID'
+import { SLOTS, DAYS_SHOWN, nowIST, upcomingDays, toKey, slotState, openSlots } from '../data/slots'
 
 const Booking = () => {
   const user = GetUserID()
@@ -38,40 +39,69 @@ const Booking = () => {
   const [amount, setAmount] = useState()
 
 
-  // Function to generate dates starting from today
-  const generateDates = (numDays = 7) => {
-    const today = new Date();
-    const newDates = [];
-    for (let i = 0; i < numDays; i++) {
-      const date = new Date();
-      date.setDate(today.getDate() + i);
-      newDates.push(date);
+  const [booked, setBooked] = useState({});          // { 'YYYY-MM-DD': ['9:00 AM', ...] } already taken
+  const [slotsLoading, setSlotsLoading] = useState(true);
+  const [now, setNow] = useState(nowIST());              // re-evaluated every 30s so passed slots vanish live
+
+  const fetchBooked = async () => {
+    try {
+      const form = new FormData();
+      form.append('doctor_id', id);
+      const res = await axios.post(ENDPOINT + 'get-booked-slots', form, SecurityHeaders);
+      if (res.data.status === 'success') setBooked(res.data.booked || {});
+    } catch (e) {
+      console.error('Could not load booked slots', e);
+    } finally {
+      setSlotsLoading(false);
     }
-    setDates(newDates);
-    // Honour ?date=YYYY-MM-DD coming from the search box if it is within the 7-day window
-    const wanted = new URLSearchParams(window.location.search).get('date');
-    const match = wanted && newDates.find((d) => {
-      const iso = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
-      return iso === wanted;
-    });
-    setSelectedDate(match || today);
   };
 
+  // Days are computed in IST, so the strip is right whatever the device's timezone is
   useEffect(() => {
-    generateDates();
+    const days = upcomingDays(DAYS_SHOWN);
+    setDates(days);
+    const wanted = new URLSearchParams(window.location.search).get('date');   // from the search box
+    setSelectedDate(days.find((d) => toKey(d) === wanted) || days[0]);
+    fetchBooked();
+    const tick = setInterval(() => setNow(nowIST()), 30000);
+    const refresh = setInterval(fetchBooked, 60000);   // pick up slots other people booked meanwhile
+    return () => { clearInterval(tick); clearInterval(refresh); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const selectedKey = selectedDate ? toKey(selectedDate) : null;
+  const dayOpen = (d) => openSlots(toKey(d), booked, now).length;
+
+  // If the picked date has no free slots left (e.g. it is evening), jump to the first day that has some
+  useEffect(() => {
+    if (slotsLoading || !selectedKey) return;
+    if (openSlots(selectedKey, booked, now).length === 0) {
+      const next = dates.find((d) => dayOpen(d) > 0);
+      if (next && toKey(next) !== selectedKey) setSelectedDate(next);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slotsLoading, dates, booked, now]);
+
+  // A chosen time that has since passed or been taken must not stay selected
+  useEffect(() => {
+    if (selectedTime && selectedKey && slotState(selectedKey, selectedTime, booked, now) !== 'open') {
+      setSelectedTime(null);
+      handleToast('That time is no longer available. Please pick another.', false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [now, booked]);
+
   const handleDateChange = (date) => {
-    setSelectedDate(new Date(date));
+    setSelectedDate(date);
     setSelectedTime(null);
   };
 
   const handleTimeClick = (time) => {
-    setSelectedTime(time);
+    if (selectedKey && slotState(selectedKey, time, booked, now) === 'open') setSelectedTime(time);
   };
 
   const formatDate = (date) => {
-    const options = { day: "numeric", month: "short", year: "numeric" };
+    const options = { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" };
     return new Intl.DateTimeFormat("en-GB", options).format(date);
   };
 
@@ -127,7 +157,7 @@ const Booking = () => {
       const data = new FormData();
       data.append("user_id", user_id);
       data.append('doctor_id', id);
-      data.append('date', selectedDate.toLocaleDateString("en-GB"));
+      data.append('date', toKey(selectedDate));
       data.append('time', selectedTime);
 
       const resp = await axios.post(ENDPOINT + 'book-appointment', data, SecurityHeaders);
@@ -136,11 +166,14 @@ const Booking = () => {
         console.log('Appointment booked:', resp);
         handleShow(); // Show success modal
       } else {
-        handleToast('Failed to book appointment. Please try again.', false);
+        handleToast(resp.data.message || 'Failed to book appointment. Please try again.', false);
       }
+      fetchBooked();
     } catch (error) {
       console.error('Error booking appointment:', error);
-      handleToast('Network error occurred while booking appointment. Please try again.', false);
+      const msg = error.response?.data?.message;
+      handleToast(msg || 'Network error occurred while booking appointment. Please try again.', false);
+      fetchBooked();                       // refresh so a just-taken slot disappears
     }
   };
 
@@ -283,19 +316,23 @@ const Booking = () => {
                         <div className="date-list-container">
                           <ul className="date-list">
                             {dates.map((date, index) => {
-                              const isSelected =
-                                selectedDate &&
-                                date.toLocaleDateString("en-GB") === selectedDate.toLocaleDateString("en-GB");
+                              const isSelected = selectedKey === toKey(date);
+                              const left = slotsLoading ? null : dayOpen(date);
+                              const full = left === 0;
                               return (
                                 <div
-                                  key={index}
-                                  className={`date-item ${isSelected ? "selected" : ""}`}
-                                  onClick={() => handleDateChange(date)}
+                                  key={toKey(date)}
+                                  className={`date-item ${isSelected ? "selected" : ""} ${full ? "is-full" : ""}`}
+                                  onClick={() => !full && handleDateChange(date)}
+                                  role="button"
+                                  aria-disabled={full}
+                                  title={full ? 'No slots left' : undefined}
                                 >
-                                  <span>{date.toLocaleDateString("en-US", { weekday: "short" })}</span><br />
+                                  <span>{index === 0 ? 'Today' : date.toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" })}</span><br />
                                   <span className="slot-date">
                                     {formatDate(date)}
                                   </span>
+                                  {left !== null && <small className="date-left">{full ? 'Full' : `${left} left`}</small>}
                                 </div>
                               );
                             })}
@@ -316,74 +353,36 @@ const Booking = () => {
                         <div className="time-slot text-center col-12">
                           {/* <h3>
                           Selected Date:{" "}
-                          {selectedDate ? selectedDate.toLocaleDateString("en-GB") : "No date selected"}
+                          {selectedDate ? formatDate(selectedDate) : "No date selected"}
                         </h3> */}
                           <div className="timing-container col-12">
-                            <div className="timing col-lg-2 col-md-4 col-sm-6 col-6">
-                              <Link
-                                className={`timing-item ${selectedTime === "9:00 AM" ? "selected" : ""}`}
-                                to="#"
-                                onClick={() => handleTimeClick("9:00 AM")}
-                              >
-                                <span>9:00</span> <span>AM</span>
-                              </Link>
-                            </div>
-                            <div className="timing col-lg-2 col-md-4 col-sm-6 col-6">
-                              <Link
-                                className={`timing-item ${selectedTime === "10:00 AM" ? "selected" : ""}`}
-                                to="#"
-                                onClick={() => handleTimeClick("10:00 AM")}
-                              >
-                                <span>10:00</span> <span>AM</span>
-                              </Link>
-                            </div>
-                            <div className="timing col-lg-2 col-md-4 col-sm-6 col-6">
-                              <Link
-                                className={`timing-item ${selectedTime === "11:00 AM" ? "selected" : ""}`}
-                                to="#"
-                                onClick={() => handleTimeClick("11:00 AM")}
-                              >
-                                <span>11:00</span> <span>AM</span>
-                              </Link>
-                            </div>
-                            <div className="timing col-lg-2 col-md-4 col-sm-6 col-6">
-                              <Link
-                                className={`timing-item ${selectedTime === "1:00 PM" ? "selected" : ""}`}
-                                to="#"
-                                onClick={() => handleTimeClick("1:00 PM")}
-                              >
-                                <span>1:00</span> <span>PM</span>
-                              </Link>
-                            </div>
-                            <div className="timing col-lg-2 col-md-4 col-sm-6 col-6">
-                              <Link
-                                className={`timing-item ${selectedTime === "2:00 PM" ? "selected" : ""}`}
-                                to="#"
-                                onClick={() => handleTimeClick("2:00 PM")}
-                              >
-                                <span>2:00</span> <span>PM</span>
-                              </Link>
-                            </div>
-                            <div className="timing col-lg-2 col-md-4 col-sm-6 col-6">
-                              <Link
-                                className={`timing-item ${selectedTime === "3:00 PM" ? "selected" : ""}`}
-                                to="#"
-                                onClick={() => handleTimeClick("3:00 PM")}
-                              >
-                                <span>3:00</span> <span>PM</span>
-                              </Link>
-                            </div>
-                            <div className="timing col-lg-2 col-md-4 col-sm-6 col-6">
-                              <Link
-                                className={`timing-item ${selectedTime === "4:00 PM" ? "selected" : ""}`}
-                                to="#"
-                                onClick={() => handleTimeClick("4:00 PM")}
-                              >
-                                <span>4:00</span> <span>PM</span>
-                              </Link>
-                            </div>
+                            {slotsLoading ? (
+                              <p className="text-muted py-3">Checking availability...</p>
+                            ) : (() => {
+                              const visible = SLOTS.filter((t) => slotState(selectedKey, t, booked, now) !== 'past');
+                              if (!visible.length) {
+                                return <p className="text-muted py-3">No more slots today. Please choose another day.</p>;
+                              }
+                              return visible.map((t) => {
+                                const isBooked = slotState(selectedKey, t, booked, now) === 'booked';
+                                const [hm, ap] = t.split(' ');
+                                return (
+                                  <div className="timing col-lg-2 col-md-4 col-sm-6 col-6" key={t}>
+                                    <Link
+                                      className={`timing-item ${selectedTime === t ? "selected" : ""} ${isBooked ? "is-booked" : ""}`}
+                                      to="#"
+                                      aria-disabled={isBooked}
+                                      title={isBooked ? 'Already booked' : undefined}
+                                      onClick={(e) => { e.preventDefault(); if (!isBooked) handleTimeClick(t); }}
+                                    >
+                                      <span>{hm}</span> <span>{ap}</span>
+                                      {isBooked && <small className="slot-tag">Booked</small>}
+                                    </Link>
+                                  </div>
+                                );
+                              });
+                            })()}
                           </div>
-
                         </div>
                       )}
 
@@ -391,7 +390,7 @@ const Booking = () => {
                       {selectedTime && selectedDate && (
                         <div className="selection-summary mt-3 ms-2">
                           <p>
-                            Selected Date: {selectedDate.toLocaleDateString("en-GB")} <br />
+                            Selected Date: {formatDate(selectedDate)} <br />
                             Selected Time: {selectedTime}
                           </p>
                         </div>
@@ -430,7 +429,7 @@ const Booking = () => {
               Appointment booked with <strong>{docdata.name}</strong>
               <br /> on <strong> {selectedTime && selectedDate && (
                 <div className="selection-summary mt-3">
-                  <p>{selectedDate.toLocaleDateString("en-GB")} <br />
+                  <p>{formatDate(selectedDate)} <br />
                     {selectedTime}
                   </p>
                 </div>

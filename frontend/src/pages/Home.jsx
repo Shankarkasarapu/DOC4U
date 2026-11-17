@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Accordion, Card, Navbar, } from 'react-bootstrap'
 import axios from 'axios';
 import ENDPOINT from '../data/ENDPOINT';
@@ -7,12 +7,14 @@ import { Link } from 'react-router-dom';
 import DoctorSearch from '../components/DoctorSearch';
 import Testimonials from '../components/Testimonials';
 import { DoctorScrollerSkeleton } from '../components/Loaders';
+import ScrollArrows from '../components/ScrollArrows';
 const vid = process.env.PUBLIC_URL + "/assets/img/banner/banner_vedio.mp4"
 
 const Home = () => {
 
     const [doctorsData, setDoctorsData] = useState([]);
     const [docsLoading, setDocsLoading] = useState(true);
+    const doctorsRef = useRef(null);
 
     const gettopdocs = async () => {
         try {
@@ -270,7 +272,8 @@ const Home = () => {
                         </div>
                     </div>
                     {docsLoading && <DoctorScrollerSkeleton />}
-                    <div className="doctor-slider-one d-flex justify-content-between overflow-scroll px-4">
+                    <ScrollArrows scrollRef={doctorsRef} label="doctors">
+                    <div ref={doctorsRef} className="doctor-slider-one d-flex justify-content-between overflow-scroll px-4" style={{ scrollBehavior: "smooth" }}>
                         {doctorsData.map((doctor) => (
                             <div
                                 key={doctor._id}
@@ -313,6 +316,8 @@ const Home = () => {
                             </div>
                         ))}
                     </div>
+                    </ScrollArrows>
+                
                 </div>
             </section>
 
